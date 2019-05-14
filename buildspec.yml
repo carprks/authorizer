@@ -2,7 +2,8 @@ version: 0.2
 phases:
   build:
     commands:
-      - go build
+      - go mod download
+      - go build .
 artifacts:
   files:
     - authorizer
