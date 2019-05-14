@@ -2,7 +2,7 @@ version: 0.2
 phases:
   build:
     commands:
-      - go mod download
+      - GOM111MODULE=on go mod download
       - go build .
 artifacts:
   files:
