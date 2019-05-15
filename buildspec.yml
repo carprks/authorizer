@@ -7,10 +7,10 @@ phases:
     commands:
       - go mod download
       - go build .
-      - aws cloudformation package --template-file template.yml --s3-bucket=$S3_BUCKET --output-template-file outputtemplate.yml
+      - aws cloudformation package --template-file template.yaml --s3-bucket=$S3_BUCKET --output-template-file outputtemplate.yml
 artifacts:
   type: zip
   files:
     - authorizer
-    - template.yml
+    - template.yaml
     - outputtemplate.yml

@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Authorizer
+Resources:
+  Authorizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app
+      Runtime: go1.x
+      CodeUri: ./
+  DataStore:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "key"
+          AttributeType: "S"
+      TableName: $AWS_DB_TABLE
+      KeySchema:
+        - AttributeName: "key"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
