@@ -10,7 +10,7 @@ import (
 )
 
 // Handler process request
-func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) events.APIGatewayCustomAuthorizerResponse {
+func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.APIGatewayCustomAuthorizerResponse, error) {
 	token := ""
 
 	authHeader := strings.ToLower(os.Getenv("AUTH_HEADER"))
@@ -26,9 +26,9 @@ func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) events.A
 
 	if strings.Contains(token, os.Getenv("AUTH_PREFIX")) {
 		if validator.Key(token) {
-			return policy.GenerateAllow(event)
+			return policy.GenerateAllow(event), nil
 		}
 	}
 
-	return policy.GenerateDeny(event)
+	return policy.GenerateDeny(event), nil
 }
