@@ -5,7 +5,7 @@ Resources:
   Authorizer:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: app
+      Handler: authorizer
       Runtime: go1.x
       CodeUri: ./
   DataStore:
