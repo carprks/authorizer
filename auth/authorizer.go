@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/carprks/authorizer/auth/policy"
 	"github.com/carprks/authorizer/auth/validator"
@@ -19,6 +20,9 @@ func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) events.A
 			token = Value
 		}
 	}
+
+	// Token sent
+	fmt.Println(fmt.Sprintf("AUTH Key: %s", token))
 
 	if strings.Contains(token, os.Getenv("AUTH_PREFIX")) {
 		if validator.Key(token) {
