@@ -14,7 +14,7 @@ Resources:
       AttributeDefinitions:
         - AttributeName: "key"
           AttributeType: "S"
-      TableName: $AWS_DB_TABLE
+      TableName: "authKeys"
       KeySchema:
         - AttributeName: "key"
           KeyType: "HASH"
