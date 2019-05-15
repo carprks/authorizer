@@ -25,18 +25,20 @@ func generatePolicy(PrincipalID, effect, resource string) events.APIGatewayCusto
 	}
 
 	authResponse.Context = map[string]interface{}{
-		"stringKey": "stringval",
-		"numberKey": 123,
+		"stringKey":  "stringval",
+		"numberKey":  123,
 		"booleanKey": true,
 	}
 
 	return authResponse
 }
 
+// GenerateDeny self explanatory
 func GenerateDeny(ev events.APIGatewayCustomAuthorizerRequestTypeRequest) events.APIGatewayCustomAuthorizerResponse {
 	return generatePolicy("user", "Deny", ev.MethodArn)
 }
 
+// GenerateAllow self explanatory
 func GenerateAllow(ev events.APIGatewayCustomAuthorizerRequestTypeRequest) events.APIGatewayCustomAuthorizerResponse {
 	return generatePolicy("user", "Allow", ev.MethodArn)
 }

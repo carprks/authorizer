@@ -9,7 +9,7 @@ import (
 )
 
 // Handler process request
-func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.APIGatewayCustomAuthorizerResponse) {
+func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) events.APIGatewayCustomAuthorizerResponse {
 	token := ""
 
 	authHeader := strings.ToLower(os.Getenv("AUTH_HEADER"))

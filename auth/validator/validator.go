@@ -10,14 +10,15 @@ import (
 	"time"
 )
 
+// KeyData object
 type KeyData struct {
-	Key string `json:"key"`
-	ExpireTime int `json:"expires"`
+	Key        string `json:"key"`
+	ExpireTime int    `json:"expires"`
 }
 
 func matchKey(key string) KeyData {
 	s, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("AWS_DB_REGION")),
+		Region:   aws.String(os.Getenv("AWS_DB_REGION")),
 		Endpoint: aws.String(os.Getenv("AWS_DB_ENDPOINT")),
 	})
 	if err != nil {
@@ -53,11 +54,10 @@ func (k KeyData) validKey() bool {
 		return true
 	}
 
-
 	return false
 }
 
-
+// Key validate the key
 func Key(key string) bool {
 	return matchKey(key).validKey()
 }
