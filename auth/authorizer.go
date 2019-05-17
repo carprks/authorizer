@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/carprks/authorizer/auth/policy"
@@ -10,7 +11,7 @@ import (
 )
 
 // Handler process request
-func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.APIGatewayCustomAuthorizerResponse, error) {
+func Handler(ctx context.Context, event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.APIGatewayCustomAuthorizerResponse, error) {
 	token := ""
 
 	authHeader := strings.ToLower(os.Getenv("AUTH_HEADER"))
@@ -31,8 +32,9 @@ func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.
 			fmt.Println(fmt.Sprintf("allowed: %s", token))
 			return policy.GenerateAllow(event), nil
 		}
+		fmt.Println(fmt.Sprintf("denied: %s", token))
+		return policy.GenerateDeny(event), nil
 	}
 
-	fmt.Println(fmt.Sprintf("denied: %s", token))
-	return policy.GenerateDeny(event), nil
+	return events.APIGatewayCustomAuthorizerResponse{}, fmt.Errorf("%s", "Unauthorized")
 }
