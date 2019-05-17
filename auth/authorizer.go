@@ -24,11 +24,14 @@ func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.
 	// Token sent
 	fmt.Println(fmt.Sprintf("AUTH Key: %s", token))
 
+	// Test token
 	if strings.Contains(token, os.Getenv("AUTH_PREFIX")) {
 		if validator.Key(token) {
+			fmt.Println(fmt.Sprintf("allowed: %s", token))
 			return policy.GenerateAllow(event), nil
 		}
 	}
 
+	fmt.Println(fmt.Sprintf("denied: %s", token))
 	return policy.GenerateDeny(event), nil
 }
