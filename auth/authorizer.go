@@ -23,6 +23,7 @@ func Handler(event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.
 
 	// Token sent
 	fmt.Println(fmt.Sprintf("AUTH Key: %s", token))
+	fmt.Println(fmt.Sprintf("Event: %v", event))
 
 	// Test token
 	if strings.Contains(token, os.Getenv("AUTH_PREFIX")) {
