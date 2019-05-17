@@ -22,7 +22,7 @@ func matchKey(key string) KeyData {
 		Endpoint: aws.String(os.Getenv("AWS_DB_ENDPOINT")),
 	})
 	if err != nil {
-		fmt.Println(fmt.Errorf("Key Session Error: %v", err))
+		fmt.Println(fmt.Sprintf("Key Session Error: %v", err))
 		return KeyData{}
 	}
 	svc := dynamodb.New(s)
@@ -35,13 +35,13 @@ func matchKey(key string) KeyData {
 		TableName: aws.String(os.Getenv("AWS_DB_TABLE")),
 	})
 	if err != nil {
-		fmt.Println(fmt.Errorf("Key Get Error: %v", err))
+		fmt.Println(fmt.Sprintf("Key Get Error: %v", err))
 		return KeyData{}
 	}
 	returnData := KeyData{}
 	unErr := dynamodbattribute.UnmarshalMap(result.Item, &returnData)
 	if unErr != nil {
-		fmt.Println(fmt.Errorf("Key Unmarshall Error: %v", unErr))
+		fmt.Println(fmt.Sprintf("Key Unmarshall Error: %v", unErr))
 		return KeyData{}
 	}
 
