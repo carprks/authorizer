@@ -35,7 +35,7 @@ func generatePolicy(PrincipalID, effect, resource string) events.APIGatewayCusto
 
 // GenerateDeny self explanatory
 func GenerateDeny(ev events.APIGatewayCustomAuthorizerRequestTypeRequest) events.APIGatewayCustomAuthorizerResponse {
-	return generatePolicy("user", "Deny", ev.MethodArn)
+	return generatePolicy("system", "Deny", ev.MethodArn)
 }
 
 // GenerateAllow self explanatory
