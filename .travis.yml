@@ -1,4 +1,7 @@
-language: golang
+language: go
+go:
+  - 1.12.5
+GO111MODULE: on
 script:
   - go mod download
   - go build .
