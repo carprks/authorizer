@@ -1,8 +1,9 @@
 language: go
 go:
   - 1.12.5
+env:
+  - GO111MODULE=on
 script:
-  - env GO111MODULE=on
   - go mod download
   - go build .
 after_success:
