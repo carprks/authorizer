@@ -1,0 +1,6 @@
+language: golang
+script:
+  - go mod download
+  - go build .
+after_success:
+  - bash .travis-deploy/deploy.sh
