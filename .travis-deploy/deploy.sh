@@ -6,6 +6,10 @@ deployIt()
 }
 
 if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
+    AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET_ACCESS_KEY
+    S3_FOLDER=$DEV_S3_BUCKET
+
     echo "Deploy Dev"
     deployIt
     echo "Deployed Dev"
