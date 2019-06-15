@@ -7,6 +7,9 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
     AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET_ACCESS_KEY
     S3_FOLDER=$DEV_S3_BUCKET
 
+    echo "Key: $AWS_ACCESS_KEY_ID"
+    echo "Sec: $AWS_SECRET_ACCESS_KEY"
+
 #    if [[ -z ${BUCKET} ]] || [[ ${BUCKET} == "" ]]; then
 #        aws s3api
 
