@@ -3,8 +3,8 @@ DEPLOY_ENV=dev
 
 cloudFormation()
 {
-    STACK_EXISTS=`AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE UPDATE_ROLLBACK_COMPLETE --region "$AWS_REGION" | jq '.StackSummaries[].StackName//empty' | grep "$STACK_NAME"`
-    if [[ -z $(${STACK_EXISTS}) ]] || [[ $(${STACK_EXISTS}) == "" ]]; then
+    STACK_EXISTS=$(AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE UPDATE_ROLLBACK_COMPLETE --region "$AWS_REGION" | jq '.StackSummaries[].StackName//empty' | grep "$STACK_NAME")
+    if [[ -z "$STACK_EXISTS" ]] || [[ "$STACK_EXISTS" == "" ]]; then
         AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws cloudformation create-stack --template-url https://"$S3_FOLDER".s3."$AWS_REGION".amazonaws.com/cf.yaml --stack-name "$STACK_NAME" --region "$AWS_REGION" --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/"$TRAVIS_BUILD_ID".zip ParameterKey=Environment,ParameterValue="$DEPLOY_ENV"  ParameterKey=BuildBucket,ParameterValue="$S3_FOLDER" --capabilities CAPABILITY_NAMED_IAM
     else
         AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws cloudformation update-stack --template-url https://"$S3_FOLDER".s3."$AWS_REGION".amazonaws.com/cf.yaml --stack-name "$STACK_NAME" --region "$AWS_REGION" --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/"$TRAVIS_BUILD_ID".zip ParameterKey=Environment,ParameterValue="$DEPLOY_ENV"  ParameterKey=BuildBucket,ParameterValue="$S3_FOLDER" --capabilities CAPABILITY_NAMED_IAM
