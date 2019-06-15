@@ -14,7 +14,7 @@ import (
 func Handler(ctx context.Context, event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.APIGatewayCustomAuthorizerResponse, error) {
 	token := ""
 
-	authHeader := strings.ToLower(os.Getenv("AUTH_HEADER"))
+	authHeader := strings.ToLower(os.Getenv("AUTH_HEAD"))
 	for Key, Value := range event.Headers {
 		key := strings.ToLower(Key)
 		if key == authHeader {
@@ -27,7 +27,7 @@ func Handler(ctx context.Context, event events.APIGatewayCustomAuthorizerRequest
 	fmt.Println(fmt.Sprintf("Event: %v", event))
 
 	// Test token
-	if strings.Contains(token, os.Getenv("AUTH_PREFIX")) {
+	if strings.Contains(token, os.Getenv("AUTH_PREF")) {
 		if validator.Key(token) {
 			fmt.Println(fmt.Sprintf("allowed: %s", token))
 			return policy.GenerateAllow(event), nil

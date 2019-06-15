@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Authorization Service"
+
+Parameters:
+  ServiceName:
+    Type: String
+  Environment:
+    Type: String
+  BuildBucket:
+    Type: String
+  BuildKey:
+    Type: String
+  AuthHeader:
+    Type: String
+    Default: 'X-Authorization'
+  AuthPrefix:
+    Type: String
+    Default: 'carprk'
+
+Resources:
+  Dynamo:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join ['-', [carprk, !Ref ServiceName, !Ref Environment, dynamo]]
+      AttributeDefinitions:
+        - AttributeName: authKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: authKey
+          KeyType: HASH
+      ProvisionedThroughput:
+        WriteCapacityUnits: 5
+        ReadCapacityUnits: 5
+
+  ServiceARN:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join ['-', [carprk, !Ref ServiceName, !Ref Environment, role]]
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: lambda
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: !GetAtt Dynamo.Arn
+              - Effect: Allow
+                Resource: '*'
+                Action:
+                  - dynamodb:DescribeReservedCapacityOfferings
+                  - dynamodb:ListGlobalTables
+                  - dynamodb:ListTables
+                  - dynamodb:DescribeReservedCapacity
+                  - dynamodb:ListBackups
+                  - dynamodb:PurchaseReservedCapacityOfferings
+                  - dynamodb:DescribeLimits
+                  - dynamodb:ListStreams
+  Service:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Join ['-', [carprk, !Ref ServiceName, !Ref Environment, lambda]]
+      Role: !GetAtt ServiceARN.Arn
+      Runtime: go1.x
+      Handler: !Ref ServiceName
+      Environment:
+        Variables:
+          DB_TABLE: !Sub arn:aws:dynamodb:${AWS::Region}:table/${Dynamo}
+          DB_ENDPOINT: !Join ['', ['http://', 'dynamodb.', !Ref 'AWS::Region', '.amazonaws.com']]
+          AUTH_HEAD: !Ref AuthHeader
+          AUTH_PREF: !Ref AuthPrefix
+          DB_REGION: !Ref AWS::Region
+      Code:
+        S3Bucket: !Ref BuildBucket
+        S3Key: !Ref BuildKey

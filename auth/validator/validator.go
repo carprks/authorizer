@@ -18,8 +18,8 @@ type KeyData struct {
 
 func matchKey(key string) KeyData {
 	s, err := session.NewSession(&aws.Config{
-		Region:   aws.String(os.Getenv("AWS_DB_REGION")),
-		Endpoint: aws.String(os.Getenv("AWS_DB_ENDPOINT")),
+		Region:   aws.String(os.Getenv("DB_REGION")),
+		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
 	})
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Key Session Error: %v", err))
@@ -32,7 +32,7 @@ func matchKey(key string) KeyData {
 				S: aws.String(key),
 			},
 		},
-		TableName: aws.String(os.Getenv("AWS_DB_TABLE")),
+		TableName: aws.String(os.Getenv("DB_TABLE")),
 	})
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Key Get Error: %v", err))
