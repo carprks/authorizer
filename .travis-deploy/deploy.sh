@@ -15,8 +15,10 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
     echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> .aws/credentials
     echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> .aws/credentials
 
+    echo "Deploy Dev"
     aws s3 cp cf.yaml s3://${S3_FOLDER}/cf.yaml
     aws s3 cp authorizer.zip s3://${S3_FOLDER}/authorizer/authorizer.zip
+    echo "Deployed Dev"
 
 # Master has an extra step to launch into live
     if [[ "$TRAVIS_BRANCH" == "master" ]]; then
@@ -30,7 +32,9 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
         echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> .aws/credentials
         echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> .aws/credentials
 
+        echo "Deploy Live"
         aws s3 cp cf.yaml s3://${S3_FOLDER}/cf.yaml
         aws s3 cp authorizer.zip s3://${S3_FOLDER}/authorizer/authorizer.zip
+        echo "Deployed Live"
     fi
 fi
