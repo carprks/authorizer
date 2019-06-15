@@ -10,24 +10,6 @@ script:
   - go mod download
   - go build .
 after_script:
-  - aws s3 cp cf.yaml s3://$DEV_S3_FOLDER/cf.yaml
   - zip authorizer.zip authorizer
-  - aws s3 cp authorizer.zip s3://$DEV_S3_FOLDER/authorizer/authorizer.zip
-deploy:
-  on:
-    branch: master
-  provider: s3
-  access_key_id: $DEV_AWS_ACCESS_KEY_ID
-  secret_access_key: $DEV_AWS_ACCESS_KEY_ID
-  bucket: $DEV_AWS_BUCKET
-after_deploy:
-  - aws cloudformation create-stack
-    --template-url s3://$DEV_S3_FOLDER/cf.yaml
-    --stack-name carprk-authorizer
-    --region eu-west-2
-    --parameters
-      ParameterKey=ServiceName,ParameterValue=authorizer
-      ParameterKey=BuildKey,ParameterValue=authorizer/authorizer.zip
-      ParameterKey=Environment,ParameterValue=dev
-      ParameterKey=BuildBucket,ParameterValue=$DEV_S3_FOLDER
-    --capabilities CAPABILITY_NAMED_IAM
+  - bash .travis-deploy/deploy.sh
+  - bash .travis-deploy/cloud.sh
