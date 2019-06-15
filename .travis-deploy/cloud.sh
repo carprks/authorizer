@@ -10,9 +10,9 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
 
     echo "Deploy Dev"
     if [[ -z ${authExists} ]] || [[ ${authExists} == "" ]]; then
-        aws cloudformation create-stack --template-url s3://${S3_FOLDER}/cf.yaml --stack-name $STACK_NAME --region $AWS_REGION --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/authorizer.zip ParameterKey=Environment,ParameterValue=${DEPLOY_ENV}  ParameterKey=BuildBucket,ParameterValue=${S3_FOLDER} --capabilities CAPABILITY_NAMED_IAM
+        AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET_ACCESS_KEY aws cloudformation create-stack --template-url s3://${S3_FOLDER}/cf.yaml --stack-name $STACK_NAME --region $AWS_REGION --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/authorizer.zip ParameterKey=Environment,ParameterValue=${DEPLOY_ENV}  ParameterKey=BuildBucket,ParameterValue=${S3_FOLDER} --capabilities CAPABILITY_NAMED_IAM
     else
-        aws cloudformation update-stack --template-url s3://${S3_FOLDER}/cf.yaml --stack-name $STACK_NAME --region $AWS_REGION --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/authorizer.zip ParameterKey=Environment,ParameterValue=${DEPLOY_ENV}  ParameterKey=BuildBucket,ParameterValue=${S3_FOLDER}
+        AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET_ACCESS_KEY aws cloudformation update-stack --template-url s3://${S3_FOLDER}/cf.yaml --stack-name $STACK_NAME --region $AWS_REGION --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/authorizer.zip ParameterKey=Environment,ParameterValue=${DEPLOY_ENV}  ParameterKey=BuildBucket,ParameterValue=${S3_FOLDER}
     fi
     echo "Deployed Dev"
 
@@ -25,9 +25,9 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
 
         echo "Deploy Live"
         if [[ -z ${authExists} ]] || [[ ${authExists} == "" ]]; then
-            aws cloudformation create-stack --template-url s3://${S3_FOLDER}/cf.yaml --stack-name $STACK_NAME --region $AWS_REGION --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/authorizer.zip ParameterKey=Environment,ParameterValue=${DEPLOY_ENV}  ParameterKey=BuildBucket,ParameterValue=${S3_FOLDER} --capabilities CAPABILITY_NAMED_IAM
+            AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET_ACCESS_KEY aws cloudformation create-stack --template-url s3://${S3_FOLDER}/cf.yaml --stack-name $STACK_NAME --region $AWS_REGION --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/authorizer.zip ParameterKey=Environment,ParameterValue=${DEPLOY_ENV}  ParameterKey=BuildBucket,ParameterValue=${S3_FOLDER} --capabilities CAPABILITY_NAMED_IAM
         else
-            aws cloudformation update-stack --template-url s3://${S3_FOLDER}/cf.yaml --stack-name $STACK_NAME --region $AWS_REGION --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/authorizer.zip ParameterKey=Environment,ParameterValue=${DEPLOY_ENV}  ParameterKey=BuildBucket,ParameterValue=${S3_FOLDER}
+            AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET_ACCESS_KEY aws cloudformation update-stack --template-url s3://${S3_FOLDER}/cf.yaml --stack-name $STACK_NAME --region $AWS_REGION --parameters ParameterKey=ServiceName,ParameterValue=authorizer ParameterKey=BuildKey,ParameterValue=authorizer/authorizer.zip ParameterKey=Environment,ParameterValue=${DEPLOY_ENV}  ParameterKey=BuildBucket,ParameterValue=${S3_FOLDER}
         fi
         echo "Deployed Live"
     fi
