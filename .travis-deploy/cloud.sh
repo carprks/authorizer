@@ -57,21 +57,23 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
 
     echo "Deploy Dev"
     deployIt
-		cloudFormationDelete
+    cloudFormationDelete
     cloudFormation
     echo "Deployed Dev"
 
     # Master has an extra step to launch into live
-    if [[ "$TRAVIS_BRANCH" == "master" ]]; then
-        AWS_ACCESS_KEY_ID=$LIVE_AWS_ACCESS_KEY_ID
-        AWS_SECRET_ACCESS_KEY=$LIVE_AWS_SECRET_ACCESS_KEY
-        S3_FOLDER=$LIVE_S3_BUCKET
-        DEPLOY_ENV=live
+    if [[ -z "$SKIP_LIVE" ]] || [[ "$SKIP_LIVE" == "false" ]]; then
+        if [[ "$TRAVIS_BRANCH" == "master" ]]; then
+            AWS_ACCESS_KEY_ID=$LIVE_AWS_ACCESS_KEY_ID
+            AWS_SECRET_ACCESS_KEY=$LIVE_AWS_SECRET_ACCESS_KEY
+            S3_FOLDER=$LIVE_S3_BUCKET
+            DEPLOY_ENV=live
 
-        echo "Deploy Live"
-        deployIt
-				cloudFormationDelete
-        cloudFormation
-        echo "Deployed Live"
+            echo "Deploy Live"
+            deployIt
+            cloudFormationDelete
+            cloudFormation
+            echo "Deployed Live"
+        fi
     fi
 fi
