@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 DEPLOY_ENV=dev
 
+cloudFormationDelete()
+{
+    STACK_ROLLBACK=$(AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" aws cloudformation list-stacks --region "$AWS_REGION" --stack-status-filter ROLLBACK_COMPLETE UPDATE_ROLLBACK_COMPLETE | jq '.StackSummaries[].StackName//empty' | grep "$STACK_NAME")
+    if [[ -z "$STACK_ROLLBACK" ]] || [[ "$STACK_ROLLBACK" == "" ]]; then
+        echo ""$STACK_NAME" in good state"
+    else
+        echo "Deleting Stack "$STACK_NAME""
+        AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws cloudformation delete-stack \
+            --region "$AWS_REGION" \
+            --stack-name "$STACK_NAME"
+        sleep 30
+        echo "Deleted Stack "$STACK_NAME""
+    fi
+}
+
 cloudFormation()
 {
     STACK_EXISTS=$(AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE UPDATE_ROLLBACK_COMPLETE ROLLBACK_COMPLETE --region "$AWS_REGION" | jq '.StackSummaries[].StackName//empty' | grep "$STACK_NAME")
@@ -42,6 +57,7 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
 
     echo "Deploy Dev"
     deployIt
+		cloudFormationDelete
     cloudFormation
     echo "Deployed Dev"
 
@@ -54,6 +70,7 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
 
         echo "Deploy Live"
         deployIt
+				cloudFormationDelete
         cloudFormation
         echo "Deployed Live"
     fi
