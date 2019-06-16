@@ -4,6 +4,7 @@ DEPLOY_ENV=dev
 cloudFormationDelete()
 {
     STACK_NAME=$SERVICE_NAME-$DEPLOY_ENV
+
     STACK_ROLLBACK=$(AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" aws cloudformation list-stacks --region "$AWS_REGION" --stack-status-filter ROLLBACK_COMPLETE UPDATE_ROLLBACK_COMPLETE | jq '.StackSummaries[].StackName//empty' | grep "$STACK_NAME")
     if [[ -z "$STACK_ROLLBACK" ]] || [[ "$STACK_ROLLBACK" == "" ]]; then
         echo ""$STACK_NAME" in good state"
@@ -19,7 +20,9 @@ cloudFormationDelete()
 
 cloudFormation()
 {
+    S3_FOLDER=$S3_BUCKET-$DEPLOY_ENV
     STACK_NAME=$SERVICE_NAME-$DEPLOY_ENV
+
     STACK_EXISTS=$(AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE UPDATE_ROLLBACK_COMPLETE ROLLBACK_COMPLETE --region "$AWS_REGION" | jq '.StackSummaries[].StackName//empty' | grep "$STACK_NAME")
     if [[ -z "$STACK_EXISTS" ]] || [[ "$STACK_EXISTS" == "" ]]; then
         AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws cloudformation create-stack \
@@ -48,6 +51,8 @@ cloudFormation()
 
 deployIt()
 {
+    S3_FOLDER=$S3_BUCKET-$DEPLOY_ENV
+
     AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws s3 cp cf.yaml s3://"$S3_FOLDER"/$SERVICE_NAME/cf.yaml
     AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws s3 cp "$TRAVIS_BUILD_ID".zip s3://$S3_FOLDER/$SERVICE_NAME/"$TRAVIS_BUILD_ID".zip
 }
@@ -55,7 +60,6 @@ deployIt()
 if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
     AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET_ACCESS_KEY
-    S3_FOLDER=$DEV_S3_BUCKET
 
     echo "Deploy Dev"
     deployIt
@@ -69,7 +73,6 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
             DEPLOY_ENV=live
             AWS_ACCESS_KEY_ID=$LIVE_AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY=$LIVE_AWS_SECRET_ACCESS_KEY
-            S3_FOLDER=$LIVE_S3_BUCKET
 
             echo "Deploy Live"
             deployIt
