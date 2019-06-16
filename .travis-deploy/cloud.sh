@@ -16,7 +16,16 @@ cloudFormation()
                 ParameterKey=Environment,ParameterValue="$DEPLOY_ENV"  \
                 ParameterKey=BuildBucket,ParameterValue="$S3_FOLDER"
     else
-        AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws cloudformation update-stack --template-url https://"$S3_FOLDER".s3."$AWS_REGION".amazonaws.com/"$SERVICE_NAME"/cf.yaml --stack-name "$STACK_NAME" --region "$AWS_REGION" --parameters ParameterKey=ServiceName,ParameterValue=$SERVICE_NAME ParameterKey=BuildKey,ParameterValue=$SERVICE_NAME/"$TRAVIS_BUILD_ID".zip ParameterKey=Environment,ParameterValue="$DEPLOY_ENV"  ParameterKey=BuildBucket,ParameterValue="$S3_FOLDER" --capabilities CAPABILITY_NAMED_IAM
+        AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws cloudformation update-stack \
+            --template-url https://"$S3_FOLDER".s3."$AWS_REGION".amazonaws.com/"$SERVICE_NAME"/cf.yaml \
+            --stack-name "$STACK_NAME" \
+            --region "$AWS_REGION" \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameters \
+                ParameterKey=ServiceName,ParameterValue=$SERVICE_NAME \
+                ParameterKey=BuildKey,ParameterValue=$SERVICE_NAME/"$TRAVIS_BUILD_ID".zip \
+                ParameterKey=Environment,ParameterValue="$DEPLOY_ENV" \
+                ParameterKey=BuildBucket,ParameterValue="$S3_FOLDER"
     fi
 }
 
