@@ -3,6 +3,7 @@ DEPLOY_ENV=dev
 
 cloudFormationDelete()
 {
+    STACK_NAME=$SERVICE_NAME-$DEPLOY_ENV
     STACK_ROLLBACK=$(AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" aws cloudformation list-stacks --region "$AWS_REGION" --stack-status-filter ROLLBACK_COMPLETE UPDATE_ROLLBACK_COMPLETE | jq '.StackSummaries[].StackName//empty' | grep "$STACK_NAME")
     if [[ -z "$STACK_ROLLBACK" ]] || [[ "$STACK_ROLLBACK" == "" ]]; then
         echo ""$STACK_NAME" in good state"
@@ -18,6 +19,7 @@ cloudFormationDelete()
 
 cloudFormation()
 {
+    STACK_NAME=$SERVICE_NAME-$DEPLOY_ENV
     STACK_EXISTS=$(AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE UPDATE_ROLLBACK_COMPLETE ROLLBACK_COMPLETE --region "$AWS_REGION" | jq '.StackSummaries[].StackName//empty' | grep "$STACK_NAME")
     if [[ -z "$STACK_EXISTS" ]] || [[ "$STACK_EXISTS" == "" ]]; then
         AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws cloudformation create-stack \
@@ -64,10 +66,10 @@ if [[ -z "$TRAVIS_PULL_REQUEST" ]] || [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; t
     # Master has an extra step to launch into live
     if [[ -z "$SKIP_LIVE" ]] || [[ "$SKIP_LIVE" == "false" ]]; then
         if [[ "$TRAVIS_BRANCH" == "master" ]]; then
+            DEPLOY_ENV=live
             AWS_ACCESS_KEY_ID=$LIVE_AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY=$LIVE_AWS_SECRET_ACCESS_KEY
             S3_FOLDER=$LIVE_S3_BUCKET
-            DEPLOY_ENV=live
 
             echo "Deploy Live"
             deployIt
