@@ -21,7 +21,7 @@ Resources:
   Dynamo:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Join ['-', [carprk, !Ref ServiceName, !Ref Environment, dynamo]]
+      TableName: !Join ['-', [!Ref ServiceName, dynamo, !Ref Environment]]
       AttributeDefinitions:
         - AttributeName: authKey
           AttributeType: S
@@ -35,7 +35,7 @@ Resources:
   ServiceARN:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Join ['-', [carprk, !Ref ServiceName, !Ref Environment, role]]
+      RoleName: !Join ['-', [!Ref ServiceName, role, !Ref Environment]]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -73,7 +73,7 @@ Resources:
   Service:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Join ['-', [carprk, !Ref ServiceName, !Ref Environment, lambda]]
+      FunctionName: !Join ['-', [!Ref ServiceName, lambda, !Ref Environment]]
       Role: !GetAtt ServiceARN.Arn
       Runtime: go1.x
       Handler: !Ref ServiceName
