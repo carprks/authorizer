@@ -79,7 +79,7 @@ Resources:
       Handler: !Ref ServiceName
       Environment:
         Variables:
-          DB_TABLE: ${Dynamo}
+          DB_TABLE: !Sub ${Dynamo}
           DB_ENDPOINT: !Join ['', ['http://', 'dynamodb.', !Ref 'AWS::Region', '.amazonaws.com']]
           AUTH_HEAD: !Ref AuthHeader
           AUTH_PREF: !Ref AuthPrefix
