@@ -28,7 +28,7 @@ func matchKey(key string) KeyData {
 	svc := dynamodb.New(s)
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
-			"key": {
+			"authKey": {
 				S: aws.String(key),
 			},
 		},
