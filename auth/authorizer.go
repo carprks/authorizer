@@ -34,6 +34,8 @@ func Handler(ctx context.Context, event events.APIGatewayCustomAuthorizerRequest
 		}
 		fmt.Println(fmt.Sprintf("denied: %s", token))
 		return policy.GenerateDeny(event), nil
+	} else {
+		fmt.Println(fmt.Sprintf("Pref: %s, key: %s", os.Getenv("AUTH_PREF"), token))
 	}
 
 	return events.APIGatewayCustomAuthorizerResponse{}, fmt.Errorf("%s", "Unauthorized")
