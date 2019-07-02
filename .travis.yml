@@ -12,3 +12,4 @@ script:
 after_script:
   - zip $TRAVIS_BUILD_ID.zip authorizer
   - bash .travis-deploy/cloud.sh
+  - bash .travis-deploy/data.sh
