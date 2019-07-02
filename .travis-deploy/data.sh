@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
+DEPLOY_ENV=dev
+
 injectIt()
 {
+    S3_FOLDER=$S3_BUCKET-$DEPLOY_ENV
     AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws s3 cp s3://"$S3_FOLDER"/$SERVICE_NAME/keys.json keys.json
     for i in $(jq -r '.keys[] | "\(.key),\(.service)"' keys.json); do
         IFS=','
