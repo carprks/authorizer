@@ -5,10 +5,10 @@ injectIt()
 {
     S3_FOLDER=$S3_BUCKET-$DEPLOY_ENV
     AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws s3 cp s3://"$S3_FOLDER"/$SERVICE_NAME/keys.json keys.json
-    for i in $(jq -r '.keys[] | "\(.key),\(.service)"' keys.json); do
+    for i in $(jq -r '.keys[] | "\(.key),\(.expires),\(.service)"' keys.json); do
         IFS=','
         read -ra SPL <<< "$i"
-        AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws dynamodb put-item --table-name $TABLE_NAME --item "{\"authKey\":{\"S\":\"${SPL[0]}\"},\"expires\":{\"N\":\"1609459200\"},\"service\":{\"S\":\"${SPL[1]}\"}}" --region $AWS_REGION
+        AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws dynamodb put-item --table-name $TABLE_NAME --item "{\"authKey\":{\"S\":\"${SPL[0]}\"},\"expires\":{\"N\":\"${SPL[1]}\"},\"service\":{\"S\":\"${SPL[2]}\"}}" --region $AWS_REGION
         IFS=' '
     done
 }
