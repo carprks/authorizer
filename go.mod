@@ -4,5 +4,5 @@ go 1.11
 
 require (
 	github.com/aws/aws-lambda-go v1.11.1
-	github.com/aws/aws-sdk-go v1.20.17
+	github.com/aws/aws-sdk-go v1.20.18
 )
