@@ -1,6 +1,6 @@
 module github.com/carprks/authorizer
 
-go 1.11
+go 1.13
 
 require (
 	github.com/aws/aws-lambda-go v1.13.1
