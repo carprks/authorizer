@@ -12,8 +12,9 @@ import (
 
 // KeyData object
 type KeyData struct {
-	Key        string `json:"key"`
+	Key        string `json:"authKey"`
 	ExpireTime int    `json:"expires"`
+	Service    string `json:"service"`
 }
 
 func matchKey(key string) KeyData {
@@ -58,6 +59,14 @@ func (k KeyData) validKey() bool {
 }
 
 // Key validate the key
-func Key(key string) bool {
-	return matchKey(key).validKey()
+func Key(key string, service string) bool {
+	keyFound := matchKey(key)
+
+	if keyFound.validKey() {
+		if keyFound.Service == service {
+			return true
+		}
+	}
+
+	return false
 }

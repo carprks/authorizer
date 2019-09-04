@@ -34,11 +34,11 @@ func generatePolicy(PrincipalID, effect, resource string) events.APIGatewayCusto
 }
 
 // GenerateDeny self explanatory
-func GenerateDeny(ev events.APIGatewayCustomAuthorizerRequestTypeRequest) events.APIGatewayCustomAuthorizerResponse {
+func GenerateDeny(ev events.APIGatewayCustomAuthorizerRequest) events.APIGatewayCustomAuthorizerResponse {
 	return generatePolicy("system", "Deny", ev.MethodArn)
 }
 
 // GenerateAllow self explanatory
-func GenerateAllow(ev events.APIGatewayCustomAuthorizerRequestTypeRequest) events.APIGatewayCustomAuthorizerResponse {
-	return generatePolicy("user", "Allow", ev.MethodArn)
+func GenerateAllow(ev events.APIGatewayCustomAuthorizerRequest) events.APIGatewayCustomAuthorizerResponse {
+	return generatePolicy("system", "Allow", ev.MethodArn)
 }
