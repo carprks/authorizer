@@ -103,6 +103,81 @@ func TestKey(t *testing.T) {
 	}
 
 	tests := []struct {
+		name string
+		request
+		expect bool
+	}{
+		{
+			name: "tester +10 min",
+			request: request{
+				key:         "tester-69e668a5-b11f-405b-ae8a-e0eb3e6f371a",
+				expires:     time.Now().Add(10 * time.Minute),
+				service:     "tester",
+				serviceTest: "tester",
+			},
+			expect: true,
+		},
+		{
+			name: "tester -10 min",
+			request: request{
+				key:         "tester-69e668a5-b11f-405b-ae8a-e0eb3e6f371a",
+				expires:     time.Now().Add(-10 * time.Minute),
+				service:     "tester",
+				serviceTest: "tester",
+			},
+		},
+		{
+			name: "tester something else",
+			request: request{
+				key:         "tester-69e668a5-b11f-405b-ae8a-e0eb3e6f371a",
+				expires:     time.Now().Add(10 * time.Minute),
+				service:     "tester",
+				serviceTest: "somethingelse",
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			injectKey(test.key, test.expires, test.service)
+
+			resp := validator.Key(test.key, test.serviceTest)
+			passed := assert.IsType(t, test.expect, resp)
+			if !passed {
+				t.Errorf("validator type test failed: %v", test.expect)
+			}
+			passed = assert.Equal(t, test.expect, resp)
+			if !passed {
+				t.Errorf("validator equal test failed: %v", test.expect)
+			}
+
+			deleteKey(test.key)
+		})
+	}
+}
+
+func BenchmarkKey(b *testing.B) {
+	b.ReportAllocs()
+
+	if len(os.Args) >= 1 {
+		for _, env := range os.Args {
+			if env == "localDev" {
+				err := godotenv.Load()
+				if err != nil {
+					fmt.Println(fmt.Sprintf("godotenv err: %v", err))
+				}
+			}
+		}
+	}
+
+	type request struct {
+		key         string
+		expires     time.Time
+		service     string
+		serviceTest string
+	}
+
+	tests := []struct {
 		request
 		expect bool
 	}{
@@ -133,13 +208,19 @@ func TestKey(t *testing.T) {
 		},
 	}
 
+	b.ResetTimer()
 	for _, test := range tests {
+		b.StopTimer()
+
 		injectKey(test.key, test.expires, test.service)
 
 		resp := validator.Key(test.key, test.serviceTest)
-		assert.IsType(t, test.expect, resp)
-		assert.Equal(t, test.expect, resp)
+		assert.IsType(b, test.expect, resp)
+		assert.Equal(b, test.expect, resp)
 
 		deleteKey(test.key)
+
+		b.StartTimer()
+
 	}
 }
